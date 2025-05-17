@@ -3,11 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDb } from "../../../../helper/db";
 import { User } from "../../../../models/user";
 
-// GET USER BY SINGLE ID
-export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+type RouteContext = {
+  params: {
+    id: string;
+  };
+};
+
+// GET USER BY ID
+export async function GET(request: NextRequest, context: RouteContext) {
   try {
     await connectDb();
     const { id } = context.params;
@@ -22,7 +25,6 @@ export async function GET(
     const user = await User.findById(id);
     return NextResponse.json(user);
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { message: "Error getting user", success: false },
       { status: 500 }
@@ -30,14 +32,11 @@ export async function GET(
   }
 }
 
-// DELETE A SINGLE USER BY ID
-export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+// DELETE USER BY ID
+export async function DELETE(request: NextRequest, context: RouteContext) {
   const { id } = context.params;
 
-  if (!id || !Types.ObjectId.isValid(id)) {
+  if (!Types.ObjectId.isValid(id)) {
     return NextResponse.json(
       { message: "Invalid or missing user ID", success: false },
       { status: 400 }
@@ -45,13 +44,13 @@ export async function DELETE(
   }
 
   try {
+    await connectDb();
     const deletedUser = await User.deleteOne({ _id: new Types.ObjectId(id) });
     return NextResponse.json(
       { message: "User deleted successfully", success: true },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting user:", error);
     return NextResponse.json(
       { message: "Error deleting user", success: false },
       { status: 500 }
@@ -60,10 +59,7 @@ export async function DELETE(
 }
 
 // UPDATE USER
-export async function PUT(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, context: RouteContext) {
   const { id } = context.params;
 
   try {
@@ -76,6 +72,7 @@ export async function PUT(
       );
     }
 
+    await connectDb();
     let user = await User.findById(id);
     if (!user) {
       return NextResponse.json(
@@ -92,12 +89,8 @@ export async function PUT(
     const updatedUser = await user.save();
     return NextResponse.json(updatedUser);
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
-      {
-        message: "Failed to update user",
-        success: false,
-      },
+      { message: "Failed to update user", success: false },
       { status: 500 }
     );
   }
