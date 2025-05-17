@@ -9,7 +9,7 @@ export interface Task {
 
 export async function addTask(task: Task): Promise<any> {
   const result = await httpAxios
-    .post("/apis/works", task)
+    .post("/api/works", task)
     .then((response) => response.data);
 
   return result;
@@ -17,14 +17,14 @@ export async function addTask(task: Task): Promise<any> {
 
 export async function getTaskOfUser(id: string) {
   const result = await httpAxios
-    .get(`/apis/users/${id}/tasks`)
+    .get(`/api/users/${id}/tasks`)
     .then((response) => response.data);
   return result;
 }
 
 export async function deleteTaskofUser(id: string) {
   const result = await httpAxios
-    .delete(`/apis/works/${id}`)
+    .delete(`/api/works/${id}`)
     .then((response) => response.data);
   return result;
 }
