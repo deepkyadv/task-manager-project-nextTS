@@ -1,16 +1,14 @@
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { connectDb } from "../../../../helper/db";
+import { extractId } from "../../../../helper/extractId";
 import { getResponseMessage } from "../../../../helper/responseMessage";
 import { Work } from "../../../../models/works";
 
 // GET SINGLE TASK OF USER
-export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const { id } = context.params;
+    const id = extractId(request);
     const works = await Work.findById(id);
     return NextResponse.json(works);
   } catch (error) {
@@ -27,10 +25,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
 ) {
   await connectDb();
-  const { id } = await context.params;
+  const id = extractId(request);
+
   const { title, content, status } = await request.json();
   try {
     let work = await Work.findById(id);
@@ -56,9 +54,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
 ) {
-  const { id } = context.params;
+  const id = extractId(request);
+
   if (!id || !Types.ObjectId.isValid(id)) {
     console.log("invalid or missing user id");
     return getResponseMessage("invalid works id", 404, false);

@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDb } from "../../../../../helper/db";
+import { extractId } from "../../../../../helper/extractId";
 import { getResponseMessage } from "../../../../../helper/responseMessage";
 import { Work } from "../../../../../models/works";
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
   ) {
-    const { id } = context.params;
     try {
     await connectDb();
+    const id = extractId(request);
+
     const tasks = await Work.find({
       userId: id,
     });

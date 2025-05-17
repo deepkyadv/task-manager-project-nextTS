@@ -33,7 +33,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/app/apis/users/[id]/route.js" ,
+, "src/app/api/users/[id]/route.js" ,
   "src",
   "next.env.d.ts"
 ],
